@@ -5,26 +5,31 @@ const { MONGODB_URI } = require('../config');
 
 const Note = require('../models/note');
 
-// mongoose.connect(MONGODB_URI, {useNewUrlParser:true})
-//   .then(() => {
-//     const searchTerm = 'lady gaga';
-//     let filter = {};
+mongoose.connect(MONGODB_URI, {useNewUrlParser:true})
+  .then(() => {
+    const searchTerm = 'Posuere';
+    let filter = {};
 
-//     if (searchTerm) {
-//       filter.title = { $regex: searchTerm, $options: 'i'};
-//     }
-//     return Note.find(filter).sort({updatedAt: 'desc'});
-//   })
-//   .then(results => {
-//     console.log(results);
-//   })
-//   .then(() => {
-//     return mongoose.disconnect();
-//   })
-//   .catch(err => {
-//     console.error(`ERROR: ${err.message}`);
-//     console.error(err);
-//   });
+    if (searchTerm) {
+      filter = {
+        $or: [
+          {title: { $regex: searchTerm, $options: 'i'}},
+          {content: { $regex: searchTerm, $options: 'i'}}
+        ]
+      };
+    }
+    return Note.find(filter).sort({updatedAt: 'desc'});
+  })
+  .then(results => {
+    console.log(results);
+  })
+  .then(() => {
+    return mongoose.disconnect();
+  })
+  .catch(err => {
+    console.error(`ERROR: ${err.message}`);
+    console.error(err);
+  });
 
 // mongoose.connect(MONGODB_URI, {useNewUrlParser:true})
 //   .then(() => {
@@ -85,20 +90,20 @@ const Note = require('../models/note');
 //     console.error(err);
 //   });
 
-mongoose.connect(MONGODB_URI, {useNewUrlParser:true})
-  .then(() => {
-    // template goes here
-    const noteToDel = {_id: '5c34ff8523a64e572c3bec86'};
+// mongoose.connect(MONGODB_URI, {useNewUrlParser:true})
+//   .then(() => {
+//     // template goes here
+//     const noteToDel = {_id: '5c34ff8523a64e572c3bec86'};
 
-    return Note.deleteOne(noteToDel);
-  })
-  .then(results => {
-    console.log(results);
-  })
-  .then(() => {
-    return mongoose.disconnect();
-  })
-  .catch(err => {
-    console.error(`ERROR: ${err.message}`);
-    console.error(err);
-  });
+//     return Note.deleteOne(noteToDel);
+//   })
+//   .then(results => {
+//     console.log(results);
+//   })
+//   .then(() => {
+//     return mongoose.disconnect();
+//   })
+//   .catch(err => {
+//     console.error(`ERROR: ${err.message}`);
+//     console.error(err);
+//   });
