@@ -18,7 +18,7 @@ router.get('/', (req, res, next) => {
   }
 
   if (folderId) {
-    filter.folderId = { $regex: folderId, $options: 'i'};
+    filter.folderId = folderId;
   }
 
   Note.find(filter)
