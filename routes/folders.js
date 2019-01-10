@@ -45,7 +45,7 @@ router.get('/:id', (req, res, next) => {
 
   Folder
     .find({_id: id})
-    .sort({name: 'desc'})
+    .sort({name: 'asc'})
     .then(folders => {
       console.log(folders);
       res.json(folders[0]);

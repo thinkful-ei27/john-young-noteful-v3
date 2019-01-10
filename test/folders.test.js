@@ -9,7 +9,7 @@ const { TEST_MONGODB_URI } = require('../config');
 
 const Folder = require('../models/folder');
 
-const { folders } = require('../db/data');
+const { folders } = require('../db/seed/data');
 
 const expect = chai.expect;
 chai.use(chaiHttp);
@@ -48,9 +48,9 @@ describe('Noteful API - Folders', function () {
         });
     });
 
-    it('should return a list with the correct right fields', function () {
+    it('should return a list with the correct fields', function () {
       return Promise.all([
-        Folder.find().sort({ updatedAt: 'desc' }),
+        Folder.find().sort({ name: 'desc' }),
         chai.request(app).get('/api/folders')
       ])
         .then(([data, res]) => {
@@ -60,38 +60,9 @@ describe('Noteful API - Folders', function () {
           expect(res.body).to.have.length(data.length);
           res.body.forEach(function (item, i) {
             expect(item).to.be.a('object');
-            expect(item).to.include.all.keys('id', 'title', 'createdAt', 'updatedAt');
+            expect(item).to.include.all.keys('id', 'name', 'createdAt', 'updatedAt');
             expect(item.id).to.equal(data[i].id);
-            expect(item.title).to.equal(data[i].title);
-            expect(item.content).to.equal(data[i].content);
-            expect(new Date(item.createdAt)).to.deep.equal(data[i].createdAt);
-            expect(new Date(item.updatedAt)).to.deep.equal(data[i].updatedAt);
-          });
-        });
-    });
-
-    it('should return correct search results for a searchTerm query', function () {
-      const searchTerm = 'gaga';
-      // const re = new RegExp(searchTerm, 'i');
-      const dbPromise = Folder.find({
-        title: { $regex: searchTerm, $options: 'i' }
-        // $or: [{ 'title': re }, { 'content': re }]
-      });
-      const apiPromise = chai.request(app)
-        .get(`/api/folders?searchTerm=${searchTerm}`);
-
-      return Promise.all([dbPromise, apiPromise])
-        .then(([data, res]) => {
-          expect(res).to.have.status(200);
-          expect(res).to.be.json;
-          expect(res.body).to.be.a('array');
-          expect(res.body).to.have.length(1);
-          res.body.forEach(function (item, i) {
-            expect(item).to.be.a('object');
-            expect(item).to.include.all.keys('id', 'title', 'createdAt', 'updatedAt');
-            expect(item.id).to.equal(data[i].id);
-            expect(item.title).to.equal(data[i].title);
-            expect(item.content).to.equal(data[i].content);
+            expect(item.name).to.equal(data[i].name);
             expect(new Date(item.createdAt)).to.deep.equal(data[i].createdAt);
             expect(new Date(item.updatedAt)).to.deep.equal(data[i].updatedAt);
           });
@@ -129,7 +100,7 @@ describe('Noteful API - Folders', function () {
           expect(res).to.have.status(200);
           expect(res).to.be.json;
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.all.keys('id', 'title', 'content', 'createdAt', 'updatedAt');
+          expect(res.body).to.have.all.keys('id', 'name', 'createdAt', 'updatedAt');
           expect(res.body.id).to.equal(data.id);
           expect(res.body.title).to.equal(data.title);
           expect(res.body.content).to.equal(data.content);
@@ -143,16 +114,6 @@ describe('Noteful API - Folders', function () {
         .get('/api/folders/NOT-A-VALID-ID')
         .then(res => {
           expect(res).to.have.status(400);
-          expect(res.body.message).to.eq('The `id` is not valid');
-        });
-    });
-
-    it('should respond with a 404 for an id that does not exist', function () {
-      // The string "DOESNOTEXIST" is 12 bytes which is a valid Mongo ObjectId
-      return chai.request(app)
-        .get('/api/folders/DOESNOTEXIST')
-        .then(res => {
-          expect(res).to.have.status(404);
         });
     });
 
@@ -162,8 +123,7 @@ describe('Noteful API - Folders', function () {
 
     it('should create and return a new item when provided valid data', function () {
       const newItem = {
-        'title': 'The best article about cats ever!',
-        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...'
+        'name': 'New Folder'
       };
       let res;
       return chai.request(app)
@@ -175,7 +135,7 @@ describe('Noteful API - Folders', function () {
           expect(res).to.have.header('location');
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
-          expect(res.body).to.have.all.keys('id', 'title', 'content', 'createdAt', 'updatedAt');
+          expect(res.body).to.have.all.keys('id', 'name', 'createdAt', 'updatedAt');
           return Folder.findById(res.body.id);
         })
         .then(data => {
@@ -198,7 +158,6 @@ describe('Noteful API - Folders', function () {
           expect(res).to.have.status(400);
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
-          expect(res.body.message).to.equal('Missing `title` in request body');
         });
     });
 
@@ -208,8 +167,7 @@ describe('Noteful API - Folders', function () {
 
     it('should update the folder when provided valid data', function () {
       const updateItem = {
-        'title': 'What about dogs?!',
-        'content': 'woof woof'
+        'name': 'New Folder'
       };
       let res, orig;
       return Folder.findOne()
@@ -224,14 +182,13 @@ describe('Noteful API - Folders', function () {
           expect(res).to.have.status(200);
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
-          expect(res.body).to.have.all.keys('id', 'title', 'content', 'createdAt', 'updatedAt');
+          expect(res.body).to.have.all.keys('id', 'name', 'createdAt', 'updatedAt');
           return Folder.findById(res.body.id);
         })
         .then( data => {
           expect(res.body.title).to.equal(data.title);
           expect(res.body.content).to.equal(data.content);
           expect(new Date(res.body.createdAt)).to.deep.equal(data.createdAt);
-          expect(new Date(res.body.updatedAt)).to.deep.equal(data.updatedAt);
           // expect folder to have been updated
           expect(new Date(res.body.updatedAt)).to.greaterThan(orig.updatedAt);
         });
@@ -247,15 +204,13 @@ describe('Noteful API - Folders', function () {
         .send(updateItem)
         .then(res => {
           expect(res).to.have.status(400);
-          expect(res.body.message).to.eq('The `id` is not valid');
         });
     });
 
     it('should respond with a 404 for an id that does not exist', function () {
       // The string "DOESNOTEXIST" is 12 bytes which is a valid Mongo ObjectId
       const updateItem = {
-        'title': 'What about dogs?!',
-        'content': 'woof woof'
+        'name': 'Newer Folder'
       };
       return chai.request(app)
         .put('/api/folders/DOESNOTEXIST')
@@ -282,7 +237,6 @@ describe('Noteful API - Folders', function () {
           expect(res).to.have.status(400);
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
-          expect(res.body.message).to.equal('Missing `title` in request body');
         });
     });
 
