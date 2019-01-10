@@ -66,7 +66,7 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
 
-  if (!mongoose.Types.ObjectId.isValid(folderId)) {
+  if (folderId && !mongoose.Types.ObjectId.isValid(folderId)) {
     const err = new Error('The `id` is not valid');
     err.status = 400;
     return next(err);
@@ -88,7 +88,7 @@ router.post('/', (req, res, next) => {
 /* ========== PUT/UPDATE A SINGLE ITEM ========== */
 router.put('/:id', (req, res, next) => {
   const { id } = req.params;
-  const { title, content } = req.body;
+  const { title, content, folderId } = req.body;
 
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -99,12 +99,6 @@ router.put('/:id', (req, res, next) => {
 
   if (!title) {
     const err = new Error('You have to supply a name to update!');
-    err.status = 400;
-    return next(err);
-  }
-
-  if (!mongoose.Types.ObjectId.isValid(folderId)) {
-    const err = new Error('The `id` is not valid');
     err.status = 400;
     return next(err);
   }

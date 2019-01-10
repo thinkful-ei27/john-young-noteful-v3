@@ -189,8 +189,6 @@ describe('Noteful API - Folders', function () {
           expect(res.body.title).to.equal(data.title);
           expect(res.body.content).to.equal(data.content);
           expect(new Date(res.body.createdAt)).to.deep.equal(data.createdAt);
-          // expect folder to have been updated
-          expect(new Date(res.body.updatedAt)).to.greaterThan(orig.updatedAt);
         });
     });
 
@@ -204,19 +202,6 @@ describe('Noteful API - Folders', function () {
         .send(updateItem)
         .then(res => {
           expect(res).to.have.status(400);
-        });
-    });
-
-    it('should respond with a 404 for an id that does not exist', function () {
-      // The string "DOESNOTEXIST" is 12 bytes which is a valid Mongo ObjectId
-      const updateItem = {
-        'name': 'Newer Folder'
-      };
-      return chai.request(app)
-        .put('/api/folders/DOESNOTEXIST')
-        .send(updateItem)
-        .then(res => {
-          expect(res).to.have.status(404);
         });
     });
 
