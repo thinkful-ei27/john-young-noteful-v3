@@ -16,7 +16,7 @@ const { tags } = require('../db/seed/data');
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-describe.skip('Noteful API - Tags', function () {
+describe('Noteful API - Tags', function () {
   before(function () {
     return mongoose.connect(TEST_MONGODB_URI, { useNewUrlParser: true })
       .then(() => mongoose.connection.db.dropDatabase());

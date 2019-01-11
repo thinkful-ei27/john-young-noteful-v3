@@ -48,26 +48,32 @@ const Note = require('../models/note');
 //     console.error(err);
 //   });
 
-// mongoose.connect(MONGODB_URI, {useNewUrlParser:true})
-//   .then(() => {
-//     // template goes here
-//     const newNote = {
-//       title: 'A brand new title',
-//       content: 'With some brand new content'
-//     };
+mongoose.connect(MONGODB_URI, {useNewUrlParser:true})
+  .then(() => {
+    // template goes here
+    const newNote = {
+      'title': 'HUBBA DUBBA DOOP!',
+      'content': 'Lorem ipsum dolorums...',
+      'tags': [
+        '222222222222222222222200',
+        '222222222222222222222201',
+        '222222222222222222222202'
+      ]
+    };
 
-//     return Note.create(newNote);
-//   })
-//   .then(results => {
-//     console.log(results);
-//   })
-//   .then(() => {
-//     return mongoose.disconnect();
-//   })
-//   .catch(err => {
-//     console.error(`ERROR: ${err.message}`);
-//     console.error(err);
-//   });
+    return Note.create(newNote, {new: true});
+  })
+  .then((result) => {
+    return console.log(result);
+  })
+  .then(() => {
+    return mongoose.disconnect();
+  })
+  .catch(err => {
+    console.error(`ERROR: ${err.message}`);
+    console.error(err);
+    return mongoose.disconnect();
+  });
 
 // mongoose.connect(MONGODB_URI, {useNewUrlParser:true})
 //   .then(() => {

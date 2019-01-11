@@ -12,7 +12,7 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe.skip('Reality Check', () => {
+describe('Reality Check', () => {
 
   it('true should be true', () => {
     expect(true).to.be.true;

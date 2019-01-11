@@ -90,7 +90,7 @@ router.post('/', (req, res, next) => {
     });
   }
 
-  const newNote = { title, content, folderId, tags };
+  const newNote = { title, content, folderId, tags: tags };
 
   Note.create(newNote)
     .then(result => {
