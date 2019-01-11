@@ -22,7 +22,10 @@ describe('Noteful API - Folders', function () {
   });
 
   beforeEach(function () {
-    return Folder.insertMany(folders);
+    return Promise.all([
+      Folder.insertMany(folders),
+      Folder.createIndexes()
+    ]);
   });
 
   afterEach(function () {

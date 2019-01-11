@@ -8,6 +8,7 @@ const app = require('../server');
 const { TEST_MONGODB_URI } = require('../config');
 
 const Note = require('../models/note');
+const Folder = require('../models/folder');
 
 const { notes } = require('../db/seed/data');
 
@@ -153,6 +154,20 @@ describe('Noteful API - Notes', function () {
         .get('/api/notes/DOESNOTEXIST')
         .then(res => {
           expect(res).to.have.status(404);
+        });
+    });
+
+    it('should have an existing folder if supplied with folderId', function() {
+      let data;
+      return Note.findOne()
+        .then(_data => {
+          data = _data;
+          let id = JSON.stringify(data.folderId);
+          return chai.request(app)
+            .get(`/api/folders/${id}`);
+        })
+        .then((res) => {
+          console.log(res.body);
         });
     });
 
