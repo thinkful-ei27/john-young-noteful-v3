@@ -21,10 +21,10 @@ router.get('/', (req, res, next) => {
     filter.folderId = folderId;
   }
 
-  // TODO: Add TagId to query filter
-  // if (tagId) {
-  //   // filter = {tags: {id: ObjectId(tagId)}};
-  // }
+  if (tagId) {
+    // const re = new RegExp(tagId, 'i');
+    filter.tags = { $in: [tagId] };
+  }
 
   Note.find(filter)
     .sort({ updatedAt: 'desc' })
