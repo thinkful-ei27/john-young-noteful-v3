@@ -14,7 +14,7 @@ const { folders } = require('../db/seed/data');
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-describe('Noteful API - Folders', function () {
+describe.skip('Noteful API - Folders', function () {
 
   before(function () {
     return mongoose.connect(TEST_MONGODB_URI, { useNewUrlParser: true })
