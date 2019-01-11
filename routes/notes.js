@@ -132,7 +132,7 @@ router.put('/:id', (req, res, next) => {
     });
   }
 
-  const updateNote = { title, content, tags };
+  const updateNote = { title, content, folderId, tags };
 
   Note.findByIdAndUpdate(id, updateNote, { new: true })
     .then(result => {

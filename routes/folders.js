@@ -95,7 +95,7 @@ router.put('/:id', (req, res, next) => {
   }
 
   Folder
-    .findByIdAndUpdate(folderToUpdate, updateFolder)
+    .findByIdAndUpdate(folderToUpdate, updateFolder, {new: true})
     .then(folders => {
       res.json(folders);
     })
