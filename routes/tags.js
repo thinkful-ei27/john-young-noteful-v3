@@ -90,13 +90,13 @@ router.put('/:id', (req, res, next) => {
     err.status = 400;
     return next(err);
   } else if (!mongoose.Types.ObjectId.isValid(tagToUpdate)) {
-    const err = new Error('The tagId you are looking for was not found');
+    const err = new Error('The tagId you are looking for is invalid');
     err.status = 400;
     return next(err);
   }
 
   Tag
-    .findByIdAndUpdate(tagToUpdate, updateTag)
+    .findByIdAndUpdate(tagToUpdate, updateTag, { new: true })
     .then(tags => {
       res.json(tags);
     })
@@ -121,14 +121,17 @@ router.delete('/:id', (req, res, next) => {
   }
 
   return Promise.all([
-    Note.deleteMany({tagId: tagToDel}),
-    Tag.findByIdAndRemove(tagToDel)
+    Tag.findByIdAndRemove(tagToDel),
+    Note.updateMany(
+      {},
+      {$pull: {tags: tagToDel}}
+    )
   ])
     .then(([notesDeleted, tagsDelete]) => {
       console.log(`The following notes were deleted: ${notesDeleted}`);
       res.sendStatus(204);
     })
-    .catch(err => {
+    .catch(err => { 
       return next(err);
     });
 });
